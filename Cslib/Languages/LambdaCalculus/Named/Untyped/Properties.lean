@@ -82,9 +82,7 @@ theorem rename_fv {m : Term Var} {x y : Var} :
     y ∉ m.vars → (m.rename x y).fv = m.fv \ {x} ∪ (if x ∈ m.fv then {y} else ∅) := by
   induction m with
   | var z => grind
-  | abs z m ih =>
-    intro hy
-    grind [vars_either_fv_or_bv]
+  | abs z m ih => grind [vars_either_fv_or_bv]
   | app m n ihm ihn => grind
 
 /-- Concatenation of renaming. -/
@@ -335,7 +333,7 @@ theorem Subst.function_to_relation {m r : Term Var} {x : Var} : m.Subst x r (m[x
     · grind [Subst.absShadow]
     · simp
       by_cases hyr : y ∈ r.fv
-      · simp only [hyr]
+      · simp [hyx, hyr]
         have hz := fresh_notMem (insert x (insert y (m.vars ∪ r.vars)))
         set z := fresh (insert x (insert y (m.vars ∪ r.vars)))
         apply Subst.alpha (m := abs z (m.rename y z)) (r := r) (n := abs z ((m.rename y z)[x := r]))
